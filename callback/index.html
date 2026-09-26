@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Tesla authorization code</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer"></head>
+<body style="font-family:system-ui,sans-serif;max-width:720px;margin:3em auto;padding:0 1em">
+<h1>Tesla sign-in complete</h1>
+<p id="msg">Reading authorization code…</p>
+<textarea id="code" rows="4" style="width:100%;font-family:monospace" readonly></textarea>
+<p><button id="copy">Copy code</button> <span id="state" style="color:#666"></span></p>
+<p style="color:#666">Paste this code into the terminal where <code>tesla_energy.py auth</code> is waiting.
+The code is single-use and expires in a few minutes. Nothing is sent anywhere by this page.</p>
+<script>
+  const p = new URLSearchParams(location.search);
+  const code = p.get('code'), err = p.get('error');
+  const msg = document.getElementById('msg');
+  if (code) { document.getElementById('code').value = code; msg.textContent = 'Your one-time authorization code:'; }
+  else if (err) { msg.textContent = 'Tesla returned an error: ' + err + ' ' + (p.get('error_description')||''); }
+  else { msg.textContent = 'No code found in the URL.'; }
+  if (p.get('state')) document.getElementById('state').textContent = 'state=' + p.get('state');
+  document.getElementById('copy').onclick = () => navigator.clipboard.writeText(code || '');
+  // strip the code from the address bar/history after display
+  history.replaceState(null, '', location.pathname);
+</script>
+</body></html>
